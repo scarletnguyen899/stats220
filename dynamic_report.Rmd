@@ -134,7 +134,7 @@ ggplot(latest_data, aes(x = hour)) +
 ```
 
 # Conclusion
-Based on r nrow(latest_data) observations:
+Based on `r nrow(latest_data)` observations:
 
 1. Reusable cup adoption: `r round(reusable_percent, 1)`%
 
