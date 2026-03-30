@@ -1,0 +1,143 @@
+---
+title: My dynamic report
+output: html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+
+```
+
+```{css}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+h2 {
+  color: #6b4c3b;
+  border-bottom: 3px solid #d4a373;
+  padding-bottom: 10px;
+  margin-top: 30px;
+}
+
+h3 {
+  color: #8b5a2b;
+  margin-top: 25px;
+}
+
+.chart-container {
+  background-color: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 20px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.summary-box {
+  background-color: #e9ecef;
+  border-left: 5px solid #d4a373;
+  padding: 12px 20px;
+  margin: 20px 0;
+  border-radius: 5px;
+}
+
+.highlight {
+  font-weight: bold;
+  color: #9c6e3e;
+  font-size: 1.1em;
+}
+
+.footer {
+  margin-top: 40px;
+  padding-top: 15px;
+  border-top: 1px solid #ddd;
+  font-size: 0.85em;
+  color: #666;
+  text-align: center;
+}
+```
+
+# Coffee Cup Sustainability: An Observational Study
+This dynamic report analyzes observational data collected on coffee cup usage patterns across different locations on campus and in local cafes. The data was collected over several days in March 2026, documenting coffee drinkers' choices between reusable and disposable cups.
+
+
+```{r}
+library(tidyverse)
+
+csv_url <- "https://docs.google.com/spreadsheets/d/e/2PACX-1vS9183XEUL-42O9jbMEUHUd1ziOmdEGUy8sOIzajYTquA66ARBq8jTOWDnZqEtSgiY_I1BNJgQBcq0v/pub?output=csv"
+
+logged_data <- read_csv(csv_url)
+
+# Rename using column positions (like your lab)
+latest_data <- logged_data %>%
+  rename(
+    timestamp = 1,
+    hour = 2,
+    location = 3,
+    reusable = 4,
+    size = 5,
+    age_range = 6
+  )
+
+# Summary 1: Reusable cup count
+reusable_table <- latest_data %>%
+  select(reusable) %>%
+  table()
+
+reusable_count <- reusable_table["Yes"]
+total_count <- sum(reusable_table)
+reusable_percent <- (reusable_count / total_count) * 100
+
+# Summary 2: Average hour
+avg_hour <- mean(latest_data$hour, na.rm = TRUE)
+```
+# Data Overview
+A total of `r nrow(latest_data)` coffee drinkers were observed across five different categories. The observations captured information about:
+
+Time of day (hour)
+
+Location where coffee was purchased
+
+Whether the cup was reusable or disposable
+
+Drink size
+
+Estimated age range of the consumer
+
+# Summary 1: `r round(reusable_percent, 1)`% of coffee drinkers used reusable cups.
+
+# Summary 2: Average coffee time was `r round(avg_hour, 1)` (between 11am-12pm).
+
+# Bar Chart 1: Reusable Cup Usage by Location
+
+```{r}
+ggplot(latest_data, aes(x = location, fill = reusable)) +
+  geom_bar() +
+  labs(title = "Reusable Cup Usage by Location",
+       x = "Location",
+       y = "Number of Observations",
+       fill = "Reusable?")
+```
+
+# Bar Chart 2: Coffee Observations by Hour
+
+```{r}
+ggplot(latest_data, aes(x = hour)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Coffee Observations by Hour",
+       x = "Hour of Day",
+       y = "Number of Observations")
+```
+
+# Conclusion
+Based on r nrow(latest_data) observations:
+
+1. Reusable cup adoption: `r round(reusable_percent, 1)`%
+
+2. Peak coffee hour: `r avg_hour`
+
+*Data collected for STATS 220*
